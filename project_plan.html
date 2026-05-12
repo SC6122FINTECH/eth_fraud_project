@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethereum Phishing / Scam Address Detection — Project Plan</title>
+<style>
+:root {
+  --fg: #1a1a1a;
+  --muted: #586069;
+  --bg: #ffffff;
+  --accent: #0366d6;
+  --code-bg: #f6f8fa;
+  --border: #e1e4e8;
+  --table-stripe: #fafbfc;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.65;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+aside.toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 28px 16px 28px 24px;
+  border-right: 1px solid var(--border);
+  font-size: 13.5px;
+}
+aside.toc .toctitle {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+aside.toc ul { list-style: none; padding-left: 12px; margin: 0; }
+aside.toc > .toc > ul { padding-left: 0; }
+aside.toc li { margin: 4px 0; }
+aside.toc a { color: var(--fg); text-decoration: none; }
+aside.toc a:hover { color: var(--accent); text-decoration: underline; }
+main {
+  padding: 36px 48px 80px;
+  min-width: 0;
+}
+h1, h2, h3, h4 { line-height: 1.25; }
+h1 {
+  font-size: 30px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 12px;
+  margin-top: 0;
+}
+h2 {
+  font-size: 23px;
+  margin-top: 40px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+h3 { font-size: 18px; margin-top: 28px; }
+h4 { font-size: 16px; margin-top: 22px; }
+a { color: var(--accent); }
+p, li { color: var(--fg); }
+strong { color: #111; }
+code {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  background: var(--code-bg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  border: 1px solid var(--border);
+}
+pre {
+  background: var(--code-bg);
+  padding: 14px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.5;
+}
+pre code { background: transparent; border: none; padding: 0; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0 24px;
+  font-size: 14px;
+  display: block;
+  overflow-x: auto;
+}
+table th, table td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+table th { background: var(--code-bg); font-weight: 600; }
+table tr:nth-child(even) td { background: var(--table-stripe); }
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin: 16px 0;
+  padding: 4px 16px;
+  color: var(--muted);
+  background: var(--code-bg);
+}
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+ul, ol { padding-left: 24px; }
+li { margin: 4px 0; }
+.headerlink { color: var(--border); text-decoration: none; padding-left: 6px; }
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink, h4:hover .headerlink {
+  color: var(--accent);
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  aside.toc {
+    position: static;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  main { padding: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc">
+    <div class="toctitle">Contents</div>
+    <div class="toc">
+<ul>
+<li><a href="#ethereum-phishing-scam-address-detection-project-plan">Ethereum Phishing / Scam Address Detection — Project Plan</a><ul>
+<li><a href="#0-status-live">0. Status (live)</a></li>
+<li><a href="#1-context">1. Context</a></li>
+<li><a href="#2-problem-definition">2. Problem Definition</a></li>
+<li><a href="#3-dataset">3. Dataset</a></li>
+<li><a href="#4-project-file-layout-built">4. Project File Layout (built)</a></li>
+<li><a href="#5-pipeline-end-to-end">5. Pipeline (end-to-end)</a><ul>
+<li><a href="#51-load-sanity-check-00_edaipynb-done">5.1 Load &amp; sanity check (00_eda...ipynb) ✓ done</a></li>
+<li><a href="#52-exploratory-data-analysis-done">5.2 Exploratory data analysis ✓ done</a></li>
+<li><a href="#53-traintest-split-7-done">5.3 Train/test split (§7) ✓ done</a></li>
+<li><a href="#54-preprocessing-fit-on-train-only-8-done">5.4 Preprocessing — fit on TRAIN ONLY (§8) ✓ done</a></li>
+<li><a href="#55-model-training-tuning-9-10-1-of-5-done">5.5 Model training &amp; tuning (§9, §10) — 1 of 5 done</a></li>
+<li><a href="#56-comparison-interpretation-06_comparison_ipynb-todo">5.6 Comparison &amp; interpretation (06_comparison_...ipynb) — TODO</a></li>
+</ul>
+</li>
+<li><a href="#6-models-hyperparameter-grids">6. Models &amp; Hyperparameter Grids</a></li>
+<li><a href="#7-evaluation-metrics-11">7. Evaluation Metrics (§11)</a></li>
+<li><a href="#8-interpretation-12">8. Interpretation (§12)</a></li>
+<li><a href="#9-group-division-of-labour">9. Group Division of Labour</a></li>
+<li><a href="#10-reusable-code-already-in-src">10. Reusable Code (already in src/)</a></li>
+<li><a href="#11-deliverables-matches-13-14-of-requirements">11. Deliverables (matches §13 + §14 of requirements)</a></li>
+<li><a href="#12-verification-how-well-know-it-works-end-to-end">12. Verification (how we'll know it works end-to-end)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+  </aside>
+  <main>
+    <h1 id="ethereum-phishing-scam-address-detection-project-plan"><a class="toclink" href="#ethereum-phishing-scam-address-detection-project-plan">Ethereum Phishing / Scam Address Detection — Project Plan</a></h1>
+<p><strong>Course:</strong> SC6122 — Group Project
+<strong>Project dir:</strong> <code>&lt;...&gt;/NTU/fintech/eth_fraud_project</code> (this directory)
+<strong>Language:</strong> Python 3.13 (already installed: pandas, numpy, scikit-learn, xgboost, lightgbm, imblearn)</p>
+<hr />
+<h2 id="0-status-live"><a class="toclink" href="#0-status-live">0. Status (live)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>State</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dataset downloaded → <code>data/transaction_dataset.csv</code></td>
+<td>Done</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>src/data_loader.py</code>, <code>preprocess.py</code>, <code>evaluation.py</code>, <code>tuning.py</code></td>
+<td>Done</td>
+<td>shared</td>
+</tr>
+<tr>
+<td><code>00_eda_and_preprocessing.ipynb</code> — executed, splits saved</td>
+<td>Done</td>
+<td>A + B</td>
+</tr>
+<tr>
+<td><code>01_logistic_regression.ipynb</code> — executed (smoke test)</td>
+<td>Done</td>
+<td>Member A</td>
+</tr>
+<tr>
+<td><code>02_knn.ipynb</code> — scaffolded, not yet run</td>
+<td>Pending</td>
+<td>Member B</td>
+</tr>
+<tr>
+<td><code>03_decision_tree.ipynb</code> — scaffolded, not yet run</td>
+<td>Pending</td>
+<td>Member C</td>
+</tr>
+<tr>
+<td><code>04_random_forest.ipynb</code> — scaffolded, not yet run</td>
+<td>Pending</td>
+<td>Member D</td>
+</tr>
+<tr>
+<td><code>05_xgboost.ipynb</code> — scaffolded, not yet run</td>
+<td>Pending</td>
+<td>Member E</td>
+</tr>
+<tr>
+<td><code>06_comparison_and_interpretation.ipynb</code></td>
+<td>Not started</td>
+<td>Member D</td>
+</tr>
+<tr>
+<td><code>report/final_report.md</code>, <code>slides_outline.md</code></td>
+<td>Not started</td>
+<td>all</td>
+</tr>
+</tbody>
+</table>
+<p><strong>LR baseline (test set):</strong> Accuracy 0.884 · Precision 0.626 · Recall 0.873 · F1 0.729 · ROC-AUC 0.941 · PR-AUC 0.828. Winning variant: SMOTE. Use these numbers as the floor each tree model should reach or beat.</p>
+<hr />
+<h2 id="1-context"><a class="toclink" href="#1-context">1. Context</a></h2>
+<p><strong>Why this project.</strong> The course requires a supervised learning project on a real dataset with a real prediction/detection problem (see <a href="../group_project_requirements.md">../group_project_requirements.md</a>). Ethereum phishing/scam detection is a strong fit because:</p>
+<ul>
+<li>The Kaggle dataset (9,841 labelled addresses, 51 columns) is real, public, and large enough to train multiple models meaningfully.</li>
+<li>It is a <strong>binary classification + detection</strong> problem with a clear business stakeholder (exchanges, wallets, on-chain analytics firms blocking risky counterparties).</li>
+<li>It is <strong>class-imbalanced</strong> (~17.8% fraud after dedupe), which forces the team to demonstrate stratified splitting, imbalance handling, and metrics beyond accuracy — all items the requirements doc explicitly grades on (§7.2, §8.4, §11.4).</li>
+<li>The cost asymmetry (false negative = victim loses funds; false positive = legitimate user blocked) gives the interpretation section (§12.1) a real story to tell.</li>
+</ul>
+<p><strong>Decisions taken at planning time, now implemented:</strong></p>
+<ul>
+<li><strong>5 models</strong>, one per group member: Logistic Regression, KNN, Decision Tree, Random Forest, XGBoost.</li>
+<li><strong>Code layout:</strong> one notebook per model + a comparison notebook (clean group-work division).</li>
+<li><strong>Imbalance:</strong> run <strong>both</strong> <code>class_weight='balanced'</code> (or <code>scale_pos_weight</code> / distance-weighted KNN) and <strong>SMOTE</strong> (training set only) per model and report which works better.</li>
+</ul>
+<hr />
+<h2 id="2-problem-definition"><a class="toclink" href="#2-problem-definition">2. Problem Definition</a></h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Real-world issue</strong></td>
+<td>Phishing/scam Ethereum addresses defraud users of millions of dollars; exchanges and wallets need to flag risky counterparties before transfers settle.</td>
+</tr>
+<tr>
+<td><strong>Task type</strong></td>
+<td>Supervised <strong>binary classification</strong> (detection).</td>
+</tr>
+<tr>
+<td><strong><code>Y</code> (target)</strong></td>
+<td><code>FLAG</code> ∈ {0 = legitimate, 1 = phishing/scam}.</td>
+</tr>
+<tr>
+<td><strong><code>X</code> (features)</strong></td>
+<td>45 behavioural features per address: transaction counts, average/min/max sent &amp; received values, time gaps, unique counterparties, contract-creation counts, ERC20 token activity, balance.</td>
+</tr>
+<tr>
+<td><strong>Decision supported</strong></td>
+<td>Whether to block / warn / require step-up review for an outbound transfer to a given address.</td>
+</tr>
+<tr>
+<td><strong>Cost of FN</strong></td>
+<td>A user sends ETH to a scammer — direct financial loss, irreversible on-chain.</td>
+</tr>
+<tr>
+<td><strong>Cost of FP</strong></td>
+<td>A legitimate user is blocked — friction, customer-support load, churn.</td>
+</tr>
+<tr>
+<td><strong>Primary metric</strong></td>
+<td><strong>Recall on the fraud class</strong> and <strong>PR AUC</strong> (because of imbalance + asymmetric costs); accuracy reported but not used to pick the winner.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-dataset"><a class="toclink" href="#3-dataset">3. Dataset</a></h2>
+<ul>
+<li><strong>Source:</strong> Kaggle — <a href="https://www.kaggle.com/datasets/vagifa/ethereum-frauddetection-dataset">Ethereum Fraud Detection Dataset (vagifa)</a>.</li>
+<li><strong>Raw size:</strong> 9,841 rows × 51 columns.</li>
+<li><strong>After load-time cleanup:</strong> 9,288 rows × 45 numeric features (dropped 3 ID columns, 2 high-cardinality token-name string columns, and 553 duplicate rows — disproportionately fraud-labelled).</li>
+<li><strong>Target distribution after dedupe:</strong> 7,632 legitimate (82.2%) / 1,656 fraud (17.8%).</li>
+<li><strong>Train/test split (stratified 80/20, <code>random_state=42</code>):</strong></li>
+<li>Train: 7,430 rows / 1,325 fraud (17.83%)</li>
+<li>Test:  1,858 rows / 331 fraud (17.82%)</li>
+<li><strong>Feature families:</strong></li>
+<li>Transaction timing: <code>Avg min between sent tnx</code>, <code>Avg min between received tnx</code>, <code>Time Diff between first and last (Mins)</code>.</li>
+<li>Transaction counts: <code>Sent tnx</code>, <code>Received Tnx</code>, <code>Number of Created Contracts</code>, <code>total transactions (including tnx to create contract)</code>.</li>
+<li>Counterparties: <code>Unique Received From Addresses</code>, <code>Unique Sent To Addresses</code>.</li>
+<li>Ether values: <code>min/max/avg value received</code>, <code>min/max/avg value sent</code>, <code>min/max/avg val sent to contract</code>, <code>total Ether sent</code>, <code>total ether received</code>, <code>total ether balance</code>.</li>
+<li>ERC20 token activity (~20 cols): <code>Total ERC20 tnxs</code>, <code>ERC20 total Ether received/sent</code>, <code>ERC20 uniq sent/rec token name</code>, etc. Many NaNs (addresses that never touched ERC20 tokens) — median-imputed in §5.4.</li>
+<li><strong>Dropped at load:</strong> <code>Index</code>, <code>Unnamed: 0</code> (row id), <code>Address</code> (string id, no signal); <code>ERC20 most sent token type</code>, <code>ERC20_most_rec_token_type</code> (300+ unique values, out of scope to encode).</li>
+<li><strong>Constant-after-preprocessing columns (7):</strong> all-zero ERC20 contract-related columns (e.g. <code>ERC20 avg time between sent tnx</code>, <code>ERC20 min/max/avg val sent contract</code>). Kept for schema stability; tree models and L1-regularized LR will down-weight them automatically.</li>
+<li><strong>Known limitations for the report:</strong></li>
+<li>Class labels come from a single curated list — selection bias possible.</li>
+<li>Features are point-in-time aggregates, not time series — no concept of "when did the scam start".</li>
+<li>Only on-chain behaviour; no off-chain context (social engineering, app context).</li>
+<li>The duplicate fraud rows suggest the source list may have been concatenated from multiple feeds; we kept only one copy of each address.</li>
+</ul>
+<hr />
+<h2 id="4-project-file-layout-built"><a class="toclink" href="#4-project-file-layout-built">4. Project File Layout (built)</a></h2>
+<pre><code>eth_fraud_project/
+├── data/
+│   └── transaction_dataset.csv               # downloaded
+├── notebooks/
+│   ├── 00_eda_and_preprocessing.ipynb        # done, executed
+│   ├── 01_logistic_regression.ipynb          # Member A — executed
+│   ├── 02_knn.ipynb                          # Member B — scaffolded
+│   ├── 03_decision_tree.ipynb                # Member C — scaffolded
+│   ├── 04_random_forest.ipynb                # Member D — scaffolded
+│   ├── 05_xgboost.ipynb                      # Member E — scaffolded
+│   └── 06_comparison_and_interpretation.ipynb # TODO — Member D
+├── src/
+│   ├── __init__.py
+│   ├── data_loader.py                        # load CSV, drop IDs/text/dupes → X, y
+│   ├── preprocess.py                         # stratified split + ColumnTransformer
+│   ├── evaluation.py                         # compute_metrics, evaluate, save_results, plots
+│   └── tuning.py                             # shared StratifiedKFold(5), grid_search / random_search
+├── artifacts/
+│   ├── splits/
+│   │   ├── splits.npz                        # X_train, X_test, y_train, y_test
+│   │   ├── preprocessor.joblib               # fitted ColumnTransformer
+│   │   └── feature_names.txt                 # 45 names, post-transform
+│   ├── models/
+│   │   └── logistic_regression.joblib        # (others appear as each member runs theirs)
+│   └── results/
+│       └── logistic_regression.json          # (others appear as each member runs theirs)
+├── figures/
+│   ├── eda_target_distribution.png
+│   ├── eda_missing_values.png
+│   ├── eda_feature_distributions_by_class.png
+│   ├── eda_correlation_heatmap.png
+│   ├── eda_outlier_boxplots.png
+│   ├── logistic_regression_confusion.png
+│   ├── logistic_regression_roc.png
+│   └── logistic_regression_pr.png
+├── report/                                    # empty — TODO
+├── requirements.txt
+├── README.md
+├── CLAUDE.md (at repo root)
+└── .gitignore
+</code></pre>
+<p><strong>Critical shared files:</strong></p>
+<ol>
+<li><code>src/preprocess.py</code> — single source of truth for the split + preprocessing pipeline. Every model notebook imports it. Prevents test-set leakage (§7.3, §8 of requirements).</li>
+<li><code>notebooks/00_eda_and_preprocessing.ipynb</code> — produced <code>artifacts/splits/splits.npz</code>. All model notebooks load this — guarantees identical splits.</li>
+<li><code>src/evaluation.py</code> — every model notebook calls the same <code>evaluate()</code> so the comparison table is apples-to-apples.</li>
+<li><code>notebooks/06_comparison_and_interpretation.ipynb</code> — TODO. Will glob <code>artifacts/results/*.json</code> to build the comparison table, ROC/PR overlays, and feature-importance interpretation.</li>
+</ol>
+<hr />
+<h2 id="5-pipeline-end-to-end"><a class="toclink" href="#5-pipeline-end-to-end">5. Pipeline (end-to-end)</a></h2>
+<h3 id="51-load-sanity-check-00_edaipynb-done"><a class="toclink" href="#51-load-sanity-check-00_edaipynb-done">5.1 Load &amp; sanity check (<code>00_eda...ipynb</code>) ✓ done</a></h3>
+<ul>
+<li>Read CSV, drop <code>Index</code>, <code>Unnamed: 0</code>, <code>Address</code>, and two ERC20 token-name string columns.</li>
+<li>Drop duplicate rows (553 removed).</li>
+<li><code>df.info()</code>, <code>df.describe()</code>, NaN counts, target distribution bar chart.</li>
+</ul>
+<h3 id="52-exploratory-data-analysis-done"><a class="toclink" href="#52-exploratory-data-analysis-done">5.2 Exploratory data analysis ✓ done</a></h3>
+<p>Saved to <code>figures/</code>:
+- <code>eda_target_distribution.png</code> — class counts + percentages.
+- <code>eda_missing_values.png</code> — NaN counts per column (ERC20 columns dominate, as expected).
+- <code>eda_feature_distributions_by_class.png</code> — log1p histograms of 8 high-signal features, legit vs fraud overlay.
+- <code>eda_correlation_heatmap.png</code> — 45×45 numeric correlation.
+- <code>eda_outlier_boxplots.png</code> — top-6 most-skewed features.</p>
+<h3 id="53-traintest-split-7-done"><a class="toclink" href="#53-traintest-split-7-done">5.3 Train/test split (§7) ✓ done</a></h3>
+<ul>
+<li>Stratified, 80/20, <code>random_state=42</code>.</li>
+<li>Verified: train fraud rate 17.83% vs test 17.82% (within 0.02pp).</li>
+</ul>
+<h3 id="54-preprocessing-fit-on-train-only-8-done"><a class="toclink" href="#54-preprocessing-fit-on-train-only-8-done">5.4 Preprocessing — fit on TRAIN ONLY (§8) ✓ done</a></h3>
+<p>Single <code>ColumnTransformer</code> in <code>src/preprocess.build_preprocessor</code>:</p>
+<ul>
+<li><strong>Median impute</strong> missing values (fit on train).</li>
+<li><strong>Signed log1p</strong> (<code>numpy.sign(x) * np.log1p(np.abs(x))</code>) — robust to the occasional small-negative balance value.</li>
+<li><strong>Standard scaling</strong> (fit on train).</li>
+<li><strong>No categorical encoding</strong> — all surviving columns are numeric.</li>
+<li><strong>No imbalance handling here</strong> — it's applied per-model inside the training pipeline so it lives inside CV folds.</li>
+</ul>
+<p>Sanity-checked: train max |mean| = 2.3e-16, non-constant std mean = 1.0000, test std mean = 0.97 (close to but not exactly 1, confirming the scaler was <em>not</em> refit on test). 7 constant-in-train columns identified and kept.</p>
+<h3 id="55-model-training-tuning-9-10-1-of-5-done"><a class="toclink" href="#55-model-training-tuning-9-10-1-of-5-done">5.5 Model training &amp; tuning (§9, §10) — 1 of 5 done</a></h3>
+<p>Each model notebook does the same 5 steps:</p>
+<ol>
+<li>Load the saved processed splits via <code>preprocess.load_splits()</code>.</li>
+<li>Define the estimator with a hyperparameter grid (table in §6).</li>
+<li>Run <code>GridSearchCV</code> (small grids) or <code>RandomizedSearchCV</code> (RF, XGBoost) with <code>StratifiedKFold(n_splits=5)</code> on <code>X_train</code> only. Scoring: <code>{f1, roc_auc, pr_auc, recall, precision}</code>; refit on <code>f1</code>.</li>
+<li>Run <strong>two variants</strong> — once with the native imbalance knob, once with SMOTE wrapped in <code>imblearn.pipeline.Pipeline</code>. Pick the better variant by validation F1.</li>
+<li>Refit the winning estimator on the full training set, predict on test, save <code>&lt;model&gt;.joblib</code> + <code>&lt;model&gt;.json</code> (metrics + best params + variant chosen).</li>
+</ol>
+<h3 id="56-comparison-interpretation-06_comparison_ipynb-todo"><a class="toclink" href="#56-comparison-interpretation-06_comparison_ipynb-todo">5.6 Comparison &amp; interpretation (<code>06_comparison_...ipynb</code>) — TODO</a></h3>
+<ul>
+<li>Load all 5 <code>results.json</code> files → combined dataframe.</li>
+<li>Render the two required tables (§11.2): tuned-hyperparam summary table + the metrics table (Accuracy / Precision / Recall / F1 / ROC AUC / PR AUC).</li>
+<li>Overlay all 5 ROC curves on one axis; same for PR curves.</li>
+<li>Permutation importance on the top model; bar chart of top-15 features.</li>
+<li>Confusion matrix for the chosen "best for objective" model.</li>
+<li>Discuss: which model wins on F1 vs PR-AUC vs recall; tie-break by stakeholder objective (high recall preferred — losing user funds is worse than minor friction).</li>
+</ul>
+<hr />
+<h2 id="6-models-hyperparameter-grids"><a class="toclink" href="#6-models-hyperparameter-grids">6. Models &amp; Hyperparameter Grids</a></h2>
+<p>All grids below are wired verbatim into the corresponding scaffolded notebook.</p>
+<table>
+<thead>
+<tr>
+<th>Owner</th>
+<th>Model</th>
+<th>Library</th>
+<th>Hyperparameters tuned</th>
+<th>Search</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td><strong>Logistic Regression</strong></td>
+<td><code>sklearn.linear_model.LogisticRegression</code></td>
+<td><code>C</code> ∈ {0.01, 0.1, 1, 10}; <code>penalty</code> ∈ {l1, l2}; <code>solver='liblinear'</code></td>
+<td>GridSearchCV</td>
+<td>✓ executed</td>
+</tr>
+<tr>
+<td>B</td>
+<td><strong>K-Nearest Neighbors</strong></td>
+<td><code>sklearn.neighbors.KNeighborsClassifier</code></td>
+<td><code>n_neighbors</code> ∈ {3, 5, 7, 11, 21}; <code>weights</code> ∈ {uniform, distance}; <code>metric</code> ∈ {euclidean, manhattan}</td>
+<td>GridSearchCV</td>
+<td>scaffolded</td>
+</tr>
+<tr>
+<td>C</td>
+<td><strong>Decision Tree</strong></td>
+<td><code>sklearn.tree.DecisionTreeClassifier</code></td>
+<td><code>max_depth</code> ∈ {None, 5, 10, 20}; <code>min_samples_split</code> ∈ {2, 10, 50}; <code>min_samples_leaf</code> ∈ {1, 5, 20}; <code>criterion</code> ∈ {gini, entropy}</td>
+<td>GridSearchCV</td>
+<td>scaffolded</td>
+</tr>
+<tr>
+<td>D</td>
+<td><strong>Random Forest</strong></td>
+<td><code>sklearn.ensemble.RandomForestClassifier</code></td>
+<td><code>n_estimators</code> ∈ {200, 500}; <code>max_depth</code> ∈ {None, 10, 20}; <code>max_features</code> ∈ {sqrt, log2}; <code>min_samples_leaf</code> ∈ {1, 5}</td>
+<td>RandomizedSearchCV(n_iter=20)</td>
+<td>scaffolded</td>
+</tr>
+<tr>
+<td>E</td>
+<td><strong>XGBoost</strong></td>
+<td><code>xgboost.XGBClassifier</code></td>
+<td><code>n_estimators</code> ∈ {200, 500, 1000}; <code>learning_rate</code> ∈ {0.05, 0.1, 0.2}; <code>max_depth</code> ∈ {3, 6, 10}; <code>subsample</code> ∈ {0.7, 1.0}; <code>colsample_bytree</code> ∈ {0.7, 1.0}</td>
+<td>RandomizedSearchCV(n_iter=30)</td>
+<td>scaffolded</td>
+</tr>
+</tbody>
+</table>
+<p>CV strategy for all: <code>StratifiedKFold(n_splits=5, shuffle=True, random_state=42)</code> — exported as <code>src.tuning.CV</code>.</p>
+<p><strong>Imbalance handling per model (Variant A vs Variant B):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Variant A (native knob)</th>
+<th>Variant B (SMOTE)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LR</td>
+<td><code>class_weight='balanced'</code></td>
+<td><code>imblearn.SMOTE</code> then LR</td>
+</tr>
+<tr>
+<td>KNN</td>
+<td>distance-weighted neighbour voting</td>
+<td><code>imblearn.SMOTE</code> then KNN</td>
+</tr>
+<tr>
+<td>DT</td>
+<td><code>class_weight='balanced'</code></td>
+<td><code>imblearn.SMOTE</code> then DT</td>
+</tr>
+<tr>
+<td>RF</td>
+<td><code>class_weight='balanced'</code></td>
+<td><code>imblearn.SMOTE</code> then RF</td>
+</tr>
+<tr>
+<td>XGB</td>
+<td><code>scale_pos_weight = neg/pos</code></td>
+<td><code>imblearn.SMOTE</code> then XGB</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-evaluation-metrics-11"><a class="toclink" href="#7-evaluation-metrics-11">7. Evaluation Metrics (§11)</a></h2>
+<p>Reported per model on <strong>the held-out test set only</strong> (also reported on train, to surface overfitting per §11.3):</p>
+<ul>
+<li><strong>Accuracy</strong> (required by professor, but not the decision metric).</li>
+<li><strong>Balanced accuracy</strong>.</li>
+<li><strong>Precision</strong> (fraud class).</li>
+<li><strong>Recall</strong> (fraud class) — primary, because missing fraud is the costlier error.</li>
+<li><strong>F1</strong> (fraud class).</li>
+<li><strong>ROC AUC</strong>.</li>
+<li><strong>PR AUC / Average Precision</strong> — most informative under class imbalance.</li>
+<li><strong>Confusion matrix</strong> (counts).</li>
+</ul>
+<p>All seven metrics + the confusion matrix are written to <code>artifacts/results/&lt;model&gt;.json</code> by <code>evaluation.evaluate()</code>.</p>
+<hr />
+<h2 id="8-interpretation-12"><a class="toclink" href="#8-interpretation-12">8. Interpretation (§12)</a></h2>
+<p>The comparison notebook must answer, in prose:</p>
+<ol>
+<li>Which model wins on F1 vs on PR-AUC vs on recall? (Expectation: XGBoost / Random Forest on F1 &amp; PR-AUC; Logistic Regression as interpretable baseline; KNN / Decision Tree weakest.)</li>
+<li>Why is recall the metric we ultimately prioritise? (User funds are irreversible.)</li>
+<li>Top features driving the decision — via permutation importance and XGBoost's <code>feature_importances_</code>. Expected high-signal: short time gaps, high transaction frequency, low ratio of unique counterparties, sparse ERC20 activity.</li>
+<li>Overfitting check — gap between train and test F1 per model. (LR train F1 = 0.742, test F1 = 0.729 → ~0.01 gap, healthy.)</li>
+<li>Limitations: label noise, point-in-time features (no time series), behaviour may have shifted post-2022.</li>
+<li>Future improvements: graph features (counterparty network), temporal features, transformer-based wallet embeddings.</li>
+</ol>
+<hr />
+<h2 id="9-group-division-of-labour"><a class="toclink" href="#9-group-division-of-labour">9. Group Division of Labour</a></h2>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Model</th>
+<th>Also responsible for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Logistic Regression</td>
+<td>EDA section in <code>00_eda...</code> (target/feature distributions)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>KNN</td>
+<td>Preprocessing pipeline (<code>src/preprocess.py</code>) and imbalance comparison</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Decision Tree</td>
+<td>Evaluation helpers (<code>src/evaluation.py</code>)</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Random Forest</td>
+<td>Comparison tables in <code>06_comparison...</code></td>
+</tr>
+<tr>
+<td>E</td>
+<td>XGBoost</td>
+<td>Feature-importance interpretation + slides</td>
+</tr>
+</tbody>
+</table>
+<p>All members co-author Sections 1, 2, 11, 12 of the report; the contribution table goes in the appendix (§13.1).</p>
+<hr />
+<h2 id="10-reusable-code-already-in-src"><a class="toclink" href="#10-reusable-code-already-in-src">10. Reusable Code (already in <code>src/</code>)</a></h2>
+<p>These are standard scikit-learn / imblearn pieces wired into the shared modules:</p>
+<ul>
+<li><code>sklearn.model_selection.train_test_split(..., stratify=y, random_state=42)</code> — <code>preprocess.stratified_split</code>.</li>
+<li><code>sklearn.compose.ColumnTransformer</code> + <code>sklearn.pipeline.Pipeline</code> — <code>preprocess.build_preprocessor</code>.</li>
+<li><code>imblearn.pipeline.Pipeline</code> + <code>SMOTE</code> — used inline in each model notebook's Variant B (keeps SMOTE inside CV folds).</li>
+<li><code>sklearn.model_selection.GridSearchCV</code> / <code>RandomizedSearchCV</code> with <code>StratifiedKFold</code> — <code>tuning.grid_search</code>, <code>tuning.random_search</code>.</li>
+<li><code>sklearn.metrics.{classification_report, confusion_matrix, roc_auc_score, average_precision_score, RocCurveDisplay, PrecisionRecallDisplay}</code> — wrapped in <code>evaluation.{compute_metrics, evaluate, plot_*}</code>.</li>
+<li><code>sklearn.inspection.permutation_importance</code> — to be used in <code>06_comparison...</code> for the feature-importance section.</li>
+</ul>
+<hr />
+<h2 id="11-deliverables-matches-13-14-of-requirements"><a class="toclink" href="#11-deliverables-matches-13-14-of-requirements">11. Deliverables (matches §13 + §14 of requirements)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Deliverable</th>
+<th>Path</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Code (notebooks + <code>src/</code> modules)</td>
+<td><code>eth_fraud_project/</code></td>
+<td>Built; 4 model notebooks await execution</td>
+</tr>
+<tr>
+<td>Comparison notebook</td>
+<td><code>notebooks/06_comparison_and_interpretation.ipynb</code></td>
+<td>TODO (Member D)</td>
+</tr>
+<tr>
+<td>Final report (≤7 pages)</td>
+<td><code>report/final_report.md</code></td>
+<td>TODO (all)</td>
+</tr>
+<tr>
+<td>Presentation slides</td>
+<td><code>report/slides_outline.md</code> → PPTX/PDF</td>
+<td>TODO (E owns deck; every member speaks per §14.2)</td>
+</tr>
+<tr>
+<td>Member contribution statement</td>
+<td>appendix of final report</td>
+<td>TODO</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-verification-how-well-know-it-works-end-to-end"><a class="toclink" href="#12-verification-how-well-know-it-works-end-to-end">12. Verification (how we'll know it works end-to-end)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. <strong>Smoke test:</strong> <code>00_eda...ipynb</code> runs top-to-bottom; splits saved;</td>
+<td>train_pos_rate − test_pos_rate</td>
+</tr>
+<tr>
+<td>2. <strong>No-leakage check:</strong> <code>ColumnTransformer</code> fit only on <code>X_train</code>; train max</td>
+<td>mean</td>
+</tr>
+<tr>
+<td>3. <strong>Per-model test:</strong> each model produces a <code>results.json</code> with all 7 metrics + best params + variant chosen. Sanity floor: test F1 ≥ 0.7 for tree models, ≥ 0.5 for LR/KNN.</td>
+<td>LR ✓ (F1 = 0.729); 4 pending</td>
+</tr>
+<tr>
+<td>4. <strong>Comparison notebook:</strong> runs end-to-end, produces the comparison table + ROC/PR overlay figures with 5 models.</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td>5. <strong>Reproducibility:</strong> every notebook sets <code>random_state=42</code>; re-running should produce identical test metrics to 4 decimal places.</td>
+<td>Verified for LR</td>
+</tr>
+</tbody>
+</table>
+  </main>
+</div>
+</body>
+</html>
