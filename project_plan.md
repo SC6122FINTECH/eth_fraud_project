@@ -17,7 +17,7 @@
 | `02_knn.ipynb` — scaffolded, not yet run | Pending | Member B |
 | `03_decision_tree.ipynb` — scaffolded, not yet run | Pending | Member C |
 | `04_random_forest.ipynb` — scaffolded, not yet run | Pending | Member D |
-| `05_xgboost.ipynb` — scaffolded, not yet run | Pending | Member E |
+| `05_ann.ipynb` — scaffolded, not yet run | Pending | Member E |
 | `06_comparison_and_interpretation.ipynb` | Not started | Member D |
 | `report/final_report.md`, `slides_outline.md` | Not started | all |
 
@@ -94,7 +94,7 @@ eth_fraud_project/
 │   ├── 02_knn.ipynb                          # Member B — scaffolded
 │   ├── 03_decision_tree.ipynb                # Member C — scaffolded
 │   ├── 04_random_forest.ipynb                # Member D — scaffolded
-│   ├── 05_xgboost.ipynb                      # Member E — scaffolded
+│   ├── 05_ann.ipynb                          # Member E — scaffolded
 │   └── 06_comparison_and_interpretation.ipynb # TODO — Member D
 ├── src/
 │   ├── __init__.py
@@ -196,7 +196,7 @@ All grids below are wired verbatim into the corresponding scaffolded notebook.
 | B | **K-Nearest Neighbors** | `sklearn.neighbors.KNeighborsClassifier` | `n_neighbors` ∈ {3, 5, 7, 11, 21}; `weights` ∈ {uniform, distance}; `metric` ∈ {euclidean, manhattan} | GridSearchCV | scaffolded |
 | C | **Decision Tree** | `sklearn.tree.DecisionTreeClassifier` | `max_depth` ∈ {None, 5, 10, 20}; `min_samples_split` ∈ {2, 10, 50}; `min_samples_leaf` ∈ {1, 5, 20}; `criterion` ∈ {gini, entropy} | GridSearchCV | scaffolded |
 | D | **Random Forest** | `sklearn.ensemble.RandomForestClassifier` | `n_estimators` ∈ {200, 500}; `max_depth` ∈ {None, 10, 20}; `max_features` ∈ {sqrt, log2}; `min_samples_leaf` ∈ {1, 5} | RandomizedSearchCV(n_iter=20) | scaffolded |
-| E | **XGBoost** | `xgboost.XGBClassifier` | `n_estimators` ∈ {200, 500, 1000}; `learning_rate` ∈ {0.05, 0.1, 0.2}; `max_depth` ∈ {3, 6, 10}; `subsample` ∈ {0.7, 1.0}; `colsample_bytree` ∈ {0.7, 1.0} | RandomizedSearchCV(n_iter=30) | scaffolded |
+| E | **ANN (MLP)** | `sklearn.neural_network.MLPClassifier` | `hidden_layer_sizes` ∈ {(64,),(128,),(64,32),(128,64)}; `activation` ∈ {relu, tanh}; `alpha` ∈ {0.001, 0.01} | GridSearchCV | scaffolded |
 
 CV strategy for all: `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)` — exported as `src.tuning.CV`.
 
@@ -208,7 +208,7 @@ CV strategy for all: `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 | KNN | distance-weighted neighbour voting | `imblearn.SMOTE` then KNN |
 | DT | `class_weight='balanced'` | `imblearn.SMOTE` then DT |
 | RF | `class_weight='balanced'` | `imblearn.SMOTE` then RF |
-| XGB | `scale_pos_weight = neg/pos` | `imblearn.SMOTE` then XGB |
+| ANN | no native class_weight → Variant A = plain MLP | `imblearn.SMOTE` then MLP |
 
 ---
 
@@ -250,7 +250,7 @@ The comparison notebook must answer, in prose:
 | B | KNN | Preprocessing pipeline (`src/preprocess.py`) and imbalance comparison |
 | C | Decision Tree | Evaluation helpers (`src/evaluation.py`) |
 | D | Random Forest | Comparison tables in `06_comparison...` |
-| E | XGBoost | Feature-importance interpretation + slides |
+| E | ANN (MLP) | Feature-importance interpretation + slides |
 
 All members co-author Sections 1, 2, 11, 12 of the report; the contribution table goes in the appendix (§13.1).
 

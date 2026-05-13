@@ -25,7 +25,7 @@ Target = `FLAG` (1 = fraud, 0 = legitimate). Imbalanced ~18% positive
 post-dedupe.
 
 **Models.** 5 models, one per group member:
-LogisticRegression, KNN, DecisionTree, RandomForest, XGBoost.
+LogisticRegression, KNN, DecisionTree, RandomForest, ANN (MLP).
 
 **Primary decision metric.** Recall (fraud class) and PR-AUC.
 Accuracy is reported but does not pick the winner — losing user funds
@@ -41,7 +41,7 @@ notebooks/
   02_knn.ipynb                     # Member B
   03_decision_tree.ipynb           # Member C
   04_random_forest.ipynb           # Member D
-  05_xgboost.ipynb                 # Member E
+  05_ann.ipynb                     # Member E
   06_comparison_and_interpretation.ipynb   # not yet scaffolded
 src/
   data_loader.py    # load + clean CSV, drops IDs / text cols / dupes
